@@ -18,7 +18,7 @@ settings.py
     DOWNLOADER_MIDDLEWARES = {
         'scrapy.contrib.downloadermiddleware.retry.RetryMiddleware': 90,
         # Fix path to this module
-        'yourspider.RandomProxy.RandomProxy': 100,
+        'yourspider.randomproxy.RandomProxy': 100,
         'scrapy.contrib.downloadermiddleware.httpproxy.HttpProxyMiddleware': 110,
     }
 
