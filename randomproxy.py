@@ -34,7 +34,7 @@ class RandomProxy(object):
 
     def process_request(self, request, spider):
         proxy = random.choice(self.proxies)
-        request.meta['proxy'] = random.choice(self.proxies)
+        request.meta['proxy'] = proxy
 
     def process_exception(self, request, exception, spider):
         proxy = request.meta['proxy']
