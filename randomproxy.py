@@ -19,13 +19,24 @@
 # THE SOFTWARE.
 
 import random
+import base64
 from scrapy import log
+
 
 class RandomProxy(object):
     def __init__(self, settings):
         self.proxy_list = settings.get('PROXY_LIST')
         f = open(self.proxy_list)
-        self.proxies = [l.strip() for l in f.readlines()]
+
+        self.proxies = {}
+        for l in f.readlines():
+            try:
+                [proxy_address, proxy_user_pass] = [p.strip() for p in l.split(",")]
+            except:
+                [proxy_address, proxy_user_pass] = [l.strip(), ""]
+
+            self.proxies[proxy_address] = proxy_user_pass
+
         f.close()
 
     @classmethod
@@ -33,11 +44,15 @@ class RandomProxy(object):
         return cls(crawler.settings)
 
     def process_request(self, request, spider):
-        proxy = random.choice(self.proxies)
-        request.meta['proxy'] = proxy
+        proxy_address = random.choice(self.proxies.keys())
+        proxy_user_pass = self.proxies[proxy_address]
+
+        request.meta['proxy'] = proxy_address
+        if proxy_user_pass:
+            request.headers['Proxy-Authorization'] = 'Basic ' + base64.encodestring(proxy_user_pass)
 
     def process_exception(self, request, exception, spider):
         proxy = request.meta['proxy']
         log.msg('Removing failed proxy <%s>, %d proxies left' % (proxy, len(self.proxies)))
-        try: self.proxies.remove(proxy)
+        try: del self.proxies[proxy]
         except ValueError: pass
