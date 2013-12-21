@@ -18,10 +18,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+import re
 import random
 import base64
 from scrapy import log
-
 
 class RandomProxy(object):
     def __init__(self, settings):
@@ -30,12 +30,13 @@ class RandomProxy(object):
 
         self.proxies = {}
         for l in f.readlines():
-            try:
-                [proxy_address, proxy_user_pass] = [p.strip() for p in l.split(",")]
-            except:
-                [proxy_address, proxy_user_pass] = [l.strip(), ""]
+            parts = re.match('(\w+://)(\w+:\w+@)?(.+)', l)
 
-            self.proxies[proxy_address] = proxy_user_pass
+            # Cut trailing @
+            if parts[1]:
+                parts[1] = parts[1][:-1]
+
+            self.proxies[parts[0] + parts[2]] = parts[1]
 
         f.close()
 

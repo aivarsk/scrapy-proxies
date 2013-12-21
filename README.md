@@ -23,8 +23,8 @@ settings.py
     }
 
     # Proxy list containing entries like
-    # http://host1:port,username:password
-    # http://host2:port,
+    # http://host1:port
+    # http://username:password@host2:port
     # http://host3:port
     # ...
     PROXY_LIST = '/path/to/proxy/list.txt
