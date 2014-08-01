@@ -33,10 +33,12 @@ class RandomProxy(object):
             parts = re.match('(\w+://)(\w+:\w+@)?(.+)', line)
 
             # Cut trailing @
-            if parts[1]:
-                parts[1] = parts[1][:-1]
+            if parts.group(2):
+                user_pass = parts.group(2)[:-1]
+            else:
+                user_pass = ''
 
-            self.proxies[parts[0] + parts[2]] = parts[1]
+            self.proxies[parts.group(1) + parts.group(3)] = user_pass
 
         fin.close()
 
