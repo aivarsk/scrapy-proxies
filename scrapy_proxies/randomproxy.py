@@ -1,15 +1,15 @@
 # Copyright (C) 2013 by Aivars Kalvans <aivars.kalvans@gmail.com>
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in
 # all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -59,6 +59,9 @@ class RandomProxy(object):
         if 'proxy' in request.meta:
             return
 
+        if len(self.proxies) == 0:
+            raise ValueError('All proxies are unusable, cannot proceed')
+
         proxy_address = random.choice(self.proxies.keys())
         proxy_user_pass = self.proxies[proxy_address]
 
@@ -74,9 +77,10 @@ class RandomProxy(object):
             return
 
         proxy = request.meta['proxy']
-        log.debug('Removing failed proxy <%s>, %d proxies left' % (
-                    proxy, len(self.proxies)))
         try:
             del self.proxies[proxy]
-        except ValueError:
+        except KeyError:
             pass
+
+        log.info('Removing failed proxy <%s>, %d proxies left' % (
+                    proxy, len(self.proxies)))
