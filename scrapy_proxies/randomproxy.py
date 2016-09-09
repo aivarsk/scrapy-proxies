@@ -23,6 +23,8 @@ import random
 import base64
 import logging
 
+log = logging.getLogger('scrapy.proxies')
+
 class RandomProxy(object):
     def __init__(self, settings):
         self.proxy_list = settings.get('PROXY_LIST')
@@ -64,7 +66,7 @@ class RandomProxy(object):
         if proxy_user_pass:
             basic_auth = 'Basic ' + base64.encodestring(proxy_user_pass)
             request.headers['Proxy-Authorization'] = basic_auth
-        logging.debug('Using proxy <%s>, %d proxies left' % (
+        log.debug('Using proxy <%s>, %d proxies left' % (
                     proxy_address, len(self.proxies)))
 
     def process_exception(self, request, exception, spider):
@@ -72,7 +74,7 @@ class RandomProxy(object):
             return
 
         proxy = request.meta['proxy']
-        logging.debug('Removing failed proxy <%s>, %d proxies left' % (
+        log.debug('Removing failed proxy <%s>, %d proxies left' % (
                     proxy, len(self.proxies)))
         try:
             del self.proxies[proxy]
