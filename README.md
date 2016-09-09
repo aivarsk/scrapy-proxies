@@ -28,9 +28,9 @@ settings.py
     RETRY_HTTP_CODES = [500, 503, 504, 400, 403, 404, 408]
 
     DOWNLOADER_MIDDLEWARES = {
-        'scrapy.contrib.downloadermiddleware.retry.RetryMiddleware': 90,
+        'scrapy.downloadermiddlewares.retry.RetryMiddleware': 90,
         'scrapy_proxies.RandomProxy': 100,
-        'scrapy.contrib.downloadermiddleware.httpproxy.HttpProxyMiddleware': 110,
+        'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': 110,
     }
 
     # Proxy list containing entries like
@@ -39,6 +39,12 @@ settings.py
     # http://host3:port
     # ...
     PROXY_LIST = '/path/to/proxy/list.txt'
+
+
+For older versions of Scrapy (before 1.0.0) you have to use
+scrapy.contrib.downloadermiddleware.retry.RetryMiddleware and
+scrapy.contrib.downloadermiddleware.httpproxy.HttpProxyMiddleware
+middlewares instead.
 
 
 Your spider
