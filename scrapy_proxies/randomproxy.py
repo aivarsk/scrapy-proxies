@@ -21,11 +21,15 @@
 import re
 import random
 import base64
-from scrapy import log
+import logging
 
 class RandomProxy(object):
     def __init__(self, settings):
         self.proxy_list = settings.get('PROXY_LIST')
+
+        if self.proxy_list is None:
+            raise KeyError('PROXY_LIST setting is missing')
+
         fin = open(self.proxy_list)
 
         self.proxies = {}
@@ -60,7 +64,7 @@ class RandomProxy(object):
         if proxy_user_pass:
             basic_auth = 'Basic ' + base64.encodestring(proxy_user_pass)
             request.headers['Proxy-Authorization'] = basic_auth
-        log.msg('Using proxy <%s>, %d proxies left' % (
+        logging.debug('Using proxy <%s>, %d proxies left' % (
                     proxy_address, len(self.proxies)))
 
     def process_exception(self, request, exception, spider):
@@ -68,7 +72,7 @@ class RandomProxy(object):
             return
 
         proxy = request.meta['proxy']
-        log.msg('Removing failed proxy <%s>, %d proxies left' % (
+        logging.debug('Removing failed proxy <%s>, %d proxies left' % (
                     proxy, len(self.proxies)))
         try:
             del self.proxies[proxy]
