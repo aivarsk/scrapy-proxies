@@ -7,6 +7,18 @@ improve crawling speed.
 Get your proxy list from sites like http://www.hidemyass.com/ (copy-paste into text file
 and reformat to http://host:port format)
 
+Install
+--------
+
+The quick way:
+
+    pip install scrapy_proxies
+
+Or checkout the source and run
+
+    python setup.py install
+
+
 settings.py
 -----------
 
@@ -17,8 +29,7 @@ settings.py
 
     DOWNLOADER_MIDDLEWARES = {
         'scrapy.contrib.downloadermiddleware.retry.RetryMiddleware': 90,
-        # Fix path to this module
-        'yourspider.randomproxy.RandomProxy': 100,
+        'scrapy_proxies.RandomProxy': 100,
         'scrapy.contrib.downloadermiddleware.httpproxy.HttpProxyMiddleware': 110,
     }
 

@@ -30,7 +30,7 @@ class RandomProxy(object):
 
         self.proxies = {}
         for line in fin.readlines():
-            parts = re.match('(\w+://)(\w+:\w+@)?(.+)', line)
+            parts = re.match('(\w+://)(\w+:\w+@)?(.+)', line.strip())
             if not parts:
                 continue
 
@@ -60,8 +60,13 @@ class RandomProxy(object):
         if proxy_user_pass:
             basic_auth = 'Basic ' + base64.encodestring(proxy_user_pass)
             request.headers['Proxy-Authorization'] = basic_auth
+        log.msg('Using proxy <%s>, %d proxies left' % (
+                    proxy_address, len(self.proxies)))
 
     def process_exception(self, request, exception, spider):
+        if 'proxy' not in request.meta:
+            return
+
         proxy = request.meta['proxy']
         log.msg('Removing failed proxy <%s>, %d proxies left' % (
                     proxy, len(self.proxies)))
