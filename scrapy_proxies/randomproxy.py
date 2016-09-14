@@ -62,7 +62,7 @@ class RandomProxy(object):
         if len(self.proxies) == 0:
             raise ValueError('All proxies are unusable, cannot proceed')
 
-        proxy_address = random.choice(self.proxies.keys())
+        proxy_address = random.choice(list(self.proxies.keys()))
         proxy_user_pass = self.proxies[proxy_address]
 
         request.meta['proxy'] = proxy_address
