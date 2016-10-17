@@ -39,6 +39,15 @@ settings.py
     # http://host3:port
     # ...
     PROXY_LIST = '/path/to/proxy/list.txt'
+    
+    # Proxy mode
+    # 0 = Every requests have different proxy
+    # 1 = Take only one proxy from the list and assign it to every requests
+    # 2 = Put a custom proxy to use in the settings
+    PROXY_MODE = 0
+    
+    # If proxy mode is 2 uncomment this sentence :
+    #CUSTOM_PROXY = http://host1:port
 
 
 For older versions of Scrapy (before 1.0.0) you have to use
