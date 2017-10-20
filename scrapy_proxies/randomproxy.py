@@ -35,31 +35,33 @@ class RandomProxy(object):
         self.mode = settings.get('PROXY_MODE')
         self.proxy_list = settings.get('PROXY_LIST')
         self.chosen_proxy = ''
-        if self.proxy_list is None:
-            raise KeyError('PROXY_LIST setting is missing')
 
         if self.mode == Mode.RANDOMIZE_PROXY_EVERY_REQUESTS or self.mode == Mode.RANDOMIZE_PROXY_ONCE:
-            fin = open(self.proxy_list)
+            if self.proxy_list is None:
+                raise KeyError('PROXY_LIST setting is missing')
             self.proxies = {}
-            for line in fin.readlines():
-                parts = re.match('(\w+://)(\w+:\w+@)?(.+)', line.strip())
-                if not parts:
-                    continue
+            fin = open(self.proxy_list)
+            try:
+                for line in fin.readlines():
+                    parts = re.match('(\w+://)([^:]+?:[^@]+?@)?(.+)', line.strip())
+                    if not parts:
+                        continue
 
-                # Cut trailing @
-                if parts.group(2):
-                    user_pass = parts.group(2)[:-1]
-                else:
-                    user_pass = ''
+                    # Cut trailing @
+                    if parts.group(2):
+                        user_pass = parts.group(2)[:-1]
+                    else:
+                        user_pass = ''
 
-                self.proxies[parts.group(1) + parts.group(3)] = user_pass
-            fin.close()
+                    self.proxies[parts.group(1) + parts.group(3)] = user_pass
+            finally:
+                fin.close()
             if self.mode == Mode.RANDOMIZE_PROXY_ONCE:
                 self.chosen_proxy = random.choice(list(self.proxies.keys()))
         elif self.mode == Mode.SET_CUSTOM_PROXY:
             custom_proxy = settings.get('CUSTOM_PROXY')
             self.proxies = {}
-            parts = re.match('(\w+://)(\w+:\w+@)?(.+)', custom_proxy.strip())
+            parts = re.match('(\w+://)([^:]+?:[^@]+?@)?(.+)', custom_proxy.strip())
             if not parts:
                 raise ValueError('CUSTOM_PROXY is not well formatted')
 
